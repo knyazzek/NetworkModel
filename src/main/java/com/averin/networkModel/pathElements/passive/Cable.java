@@ -1,8 +1,16 @@
 package com.averin.networkModel.pathElements.passive;
 
-import com.averin.networkModel.IPathElement;
+import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.pathElements.active.ActiveElement;
+
+import java.util.Set;
 
 public class Cable extends PassiveElement {
+
+    public Cable(ActiveElement activeElement1, ActiveElement activeElement2) {
+        addConnection(activeElement1);
+        addConnection(activeElement2);
+    }
 
     @Override
     public int getID() {
@@ -17,11 +25,6 @@ public class Cable extends PassiveElement {
     @Override
     public int getCosts() {
         return 0;
-    }
-
-    @Override
-    public void removeConnection(IPathElement pathElement) {
-
     }
 
     @Override

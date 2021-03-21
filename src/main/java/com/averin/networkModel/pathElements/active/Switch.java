@@ -3,6 +3,7 @@ package com.averin.networkModel.pathElements.active;
 import com.averin.networkModel.IChannelLayerDevice;
 import com.averin.networkModel.IPV4;
 import com.averin.networkModel.MacAddress;
+import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.passive.PassiveElement;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,36 +24,31 @@ public class Switch extends ActiveElement implements IChannelLayerDevice {
         7.Топология:Только в виде дерева или звезды
      */
 
-
     //            Port     Mac
     private Map<Integer, MacAddress> switchingTable = new HashMap<>();
 
-
     @Override
-    public MacAddress respondArpRequest(ActiveElement sender,IPV4 ip) {
-        Map<PassiveElement, ActiveElement> connections = getConnections();
+    public MacAddress respondArpRequest(IChannelLayerDevice sender, IPV4 ip) {
+        for (IPathElement connection : this.getConnections()) {
 
-        for (ActiveElement connection : connections.values()) {
-            if (connection == sender) continue;
+            for (IPathElement activeElement : connection.getConnections(this)) {
 
-            if (connection instanceof IChannelLayerDevice) {
-                MacAddress response = ((IChannelLayerDevice) connection).respondArpRequest(this, ip);
+                if (activeElement == sender) continue;
 
-                if (!(response == null))
-                    return response;
+                if (activeElement instanceof IChannelLayerDevice) {
+                    MacAddress response = ((IChannelLayerDevice) activeElement).
+                            respondArpRequest(this, ip);
+
+                    if (!(response == null))
+                        return response;
+                }
             }
         }
-
         return null;
-    }
-
-    public void addSwitching() {
-
     }
 
     @Override
     public String getInfo() {
         return null;
     }
-
 }

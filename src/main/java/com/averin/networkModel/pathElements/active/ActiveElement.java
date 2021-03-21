@@ -4,8 +4,8 @@ import com.averin.networkModel.IPV4;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.passive.PassiveElement;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 public abstract class ActiveElement implements IPathElement {
 
@@ -14,7 +14,7 @@ public abstract class ActiveElement implements IPathElement {
     private int id;
     private int timeDelay;
     private int cost;
-    private Map<PassiveElement,ActiveElement> connections = new HashMap<>();
+    private Set<IPathElement> connections = new HashSet<>();
 
     public IPV4 getIP() {
         return new IPV4(ipV4);
@@ -44,16 +44,21 @@ public abstract class ActiveElement implements IPathElement {
         return cost;
     }
 
-    public Map<PassiveElement, ActiveElement> getConnections() {
-        return new HashMap<PassiveElement, ActiveElement>(connections);
+    @Override
+    public Set<IPathElement> getConnections() {
+        return new HashSet<>(connections);
     }
 
-    public void addConnection(PassiveElement passiveElement, ActiveElement activeElement) {
-            connections.put(passiveElement, activeElement);
+    @Override
+    public Set<IPathElement> getConnections(IPathElement pathElement) {
+        Set<IPathElement> connections =  getConnections();
+        connections.remove(pathElement);
+
+        return connections;
     }
 
-    public void removeConnection(PassiveElement passiveElement, ActiveElement activeElement) {
-        connections.remove(passiveElement, activeElement);
+    public void addConnection(IPathElement passiveElement) {
+        connections.add(passiveElement);
     }
 
     public abstract String getInfo();

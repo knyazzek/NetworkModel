@@ -7,10 +7,11 @@ public interface IPathElement {
     public int getTimeDelay();
     public int getCosts();
 
-    //TODO addConnection
-    //public void addConnection(IPathElement pathElement);
+    public Set<IPathElement> getConnections();
+    public Set<IPathElement> getConnections(IPathElement pathElement);
 
-    public void removeConnection(IPathElement pathElement);
+    public void addConnection(IPathElement pathElement);
+    //public void removeConnection(IPathElement pathElement);
 
     public String getInfo();
 }
