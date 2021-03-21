@@ -1,12 +1,11 @@
 /*package com.averin.networkModel.routeProviders;
 
 import com.averin.networkModel.IChannelLayerDevice;
-import com.averin.networkModel.IPathElement;
+import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.Network;
 import com.averin.networkModel.pathElements.active.ActiveElement;
 import com.averin.networkModel.pathElements.active.PC;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,13 +22,13 @@ public class RipRouteProvider implements IRouteProvider {
         ActiveElement sender = ...;
         ActiveElement recipient = ...;
 
-        if (Arrays.equals(sender.getIP().getNetAddress(), recipient.getIP().getNetMask())) {
-            MacAddress macAddress =
+        if (Arrays.equals(sender.getIP().getNetAddress(), recipient.getIP().getNetAddress())) {
+            MacAddress recipientMacAddress =
                     ((IChannelLayerDevice)sender).sendArpRequest(sender, recipient.getIP());
 
-            System.out.println(macAddress.toString());
-
+            System.out.println(recipientMacAddress.toString());
         } else {
+
             *//*
             1.передаём пакет на маршрутизатор через gateway
             2.производим подготовку маршрутизаторов(динамическое изучение сети)

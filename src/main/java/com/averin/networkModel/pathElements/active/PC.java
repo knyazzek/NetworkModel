@@ -3,8 +3,8 @@ package com.averin.networkModel.pathElements.active;
 import com.averin.networkModel.IChannelLayerDevice;
 import com.averin.networkModel.IPV4;
 import com.averin.networkModel.MacAddress;
+import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.passive.PassiveElement;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +21,15 @@ public class PC extends ActiveElement implements IChannelLayerDevice {
 
     private Map<IPV4, MacAddress> arpTable = new HashMap<>();
 
+    public PC(IPV4 ip, MacAddress macAddress) {
+        this.setIpV4(ip);
+        this.setMacAddress(macAddress);
+    }
+
     @Override
-    public MacAddress respondArpRequest(ActiveElement sender, IPV4 ip) {
+    public MacAddress respondArpRequest(IChannelLayerDevice pathElement, IPV4 ip) {
+        ActiveElement sender = (ActiveElement) pathElement;
+
         if (!arpTable.containsKey(sender.getIP()))
             arpTable.put(sender.getIP(), sender.getMacAddress());
 
