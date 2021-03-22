@@ -7,9 +7,7 @@ import java.lang.reflect.Modifier;
 public class ConsoleCommand {
 
     public static void route(String[] command, Network net, IRouteProvider routeProvider) {
-
         switch (command.length) {
-
             case 5 :
                 if (IPV4.isIPV4(command[3]) && IPV4.isIPV4(command[4])) {
                     System.out.println("route network, provider, id1, id2");
@@ -30,6 +28,7 @@ public class ConsoleCommand {
                     } else {
                         System.out.println("Invalid parameters.");
                     }
+                    System.out.println("Invalid flag for the command ");
                 }
                 break;
 

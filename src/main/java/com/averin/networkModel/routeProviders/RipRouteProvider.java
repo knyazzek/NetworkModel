@@ -39,7 +39,6 @@ public class RipRouteProvider implements IRouteProvider {
             4.посылаем arp-запрос
             5.узнаём mac-адрес
             */
-
         }
         return null;
     }

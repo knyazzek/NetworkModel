@@ -18,13 +18,11 @@ public class NetworkTest {
         outer:
         while (true) {
             System.out.print("Input:");
-
             String str = scanner.nextLine();
             String[] command = str.split(" ");
 
             switch (command[0]) {
                 case ("route") :
-
                     //TODO Don't forget to do it normally
                         ConsoleCommand.route(command, networkList.get(0), new RipRouteProvider());
                     break;

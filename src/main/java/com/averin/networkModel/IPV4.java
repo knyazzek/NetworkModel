@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class IPV4 {
     private int[] ip = new int[4];
     private int[] netMask = new int[4];
-    private int[] netAddress;
+    private int[] netAddress = new int[4];
 
     //TODO IPV4 validation
     public IPV4(String ip) {
@@ -21,6 +21,7 @@ public class IPV4 {
 
         if (IPV4.isIPV4(netMask)) {
             setNetMask(netMask);
+            setNetAddress();
         } else {
             System.out.println("Incorrect ip");
         }
@@ -30,6 +31,7 @@ public class IPV4 {
     public IPV4(int[] ip, int[] netMask) {
         this.ip = Arrays.copyOf(ip, ip.length);
         this.netMask = Arrays.copyOf(netMask, netMask.length);
+        setNetAddress();
     }
 
     public IPV4(IPV4 ipv4) {
@@ -93,6 +95,9 @@ public class IPV4 {
 
     //TODO setNetAddress
     private void setNetAddress() {
+        for (int i = 0; i < 4; i++) {
+            netAddress[i] = ip[i] & netAddress[i];
+        }
     }
 
     @Override
