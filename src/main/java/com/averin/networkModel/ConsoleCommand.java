@@ -19,14 +19,18 @@ public class ConsoleCommand {
                 break;
 
             case 6 :
-                if (command[1].equals("-ip"))
+                if (command[1].equals("-ip")) {
                     if (IPV4.isIPV4(command[4]) && IPV4.isIPV4(command[5])) {
                         System.out.println("route –ip network, provider, ip1, ip2");
 
-                        //routeProvider.getRoute();
+                        IPV4 senderIP = new IPV4(command[4]);
+                        IPV4 recipientIP = new IPV4(command[5]);
+
+                        routeProvider.getRoute(senderIP, recipientIP, net);
                     } else {
                         System.out.println("Invalid parameters.");
                     }
+                }
                 break;
 
             default:
@@ -41,7 +45,7 @@ public class ConsoleCommand {
 
         for (Method method : methods) {
             if (Modifier.isStatic(method.getModifiers())) {
-                System.out.println(method.getName());
+                System.out.println("    -" + method.getName());
             }
         }
     }

@@ -1,11 +1,30 @@
 package com.averin.networkModel;
 
 import com.averin.networkModel.pathElements.IPathElement;
-import java.util.Map;
+import com.averin.networkModel.pathElements.active.ActiveElement;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Network {
+    private Set<IPathElement> pathElements = new HashSet<>();
 
-    private Map<Integer, IPathElement> pathElements;
+    public ActiveElement findByIP(IPV4 ip) {
+        for (IPathElement pathElement : pathElements) {
+            if (pathElement instanceof ActiveElement
+                    && ((ActiveElement)pathElement).getIP().equals(ip)) {
+                return (ActiveElement)pathElement;
+            }
+        }
+        return null;
+    }
+
+    public void addPathElement(IPathElement pathElement) {
+        this.pathElements.add(pathElement);
+    }
+
+    public void addPathElements(Set<IPathElement> pathElements) {
+        this.pathElements.addAll(pathElements);
+    }
 
     /*
     Что нужно реализовать?

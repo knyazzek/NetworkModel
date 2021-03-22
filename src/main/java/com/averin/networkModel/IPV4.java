@@ -3,34 +3,40 @@ package com.averin.networkModel;
 import java.util.Arrays;
 
 public class IPV4 {
-
     private int[] ip = new int[4];
     private int[] netMask = new int[4];
     private int[] netAddress;
 
     //TODO IPV4 validation
-    public IPV4 (String ip, String netMask) {
-        if (isIPV4(ip) && isIPV4(netMask)) {
+    public IPV4(String ip) {
+        if (IPV4.isIPV4(ip)) {
             setIp(ip);
-            setNetMask(netMask);
-            setNetAddress();
         } else {
-            System.out.println("Incorrect IP");
+            System.out.println("Incorrect ip");
+        }
+    }
+
+    public IPV4(String ip, String netMask) {
+        this(ip);
+
+        if (IPV4.isIPV4(netMask)) {
+            setNetMask(netMask);
+        } else {
+            System.out.println("Incorrect ip");
         }
     }
 
     //TODO IPV4 validation
-    public IPV4 (int[] ip, int[] netMask) {
+    public IPV4(int[] ip, int[] netMask) {
         this.ip = Arrays.copyOf(ip, ip.length);
         this.netMask = Arrays.copyOf(netMask, netMask.length);
-        setNetAddress();
     }
 
-    public IPV4 (IPV4 ipv4) {
+    public IPV4(IPV4 ipv4) {
         this(ipv4.getIp(), ipv4.getNetMask());
     }
 
-    public static boolean isIPV4(String ip) {
+    public static boolean isIPV4 (String ip) {
         String[] octets = ip.split("\\.");
 
         if (octets.length != 4)
@@ -87,7 +93,6 @@ public class IPV4 {
 
     //TODO setNetAddress
     private void setNetAddress() {
-
     }
 
     @Override
@@ -95,9 +100,7 @@ public class IPV4 {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         IPV4 ipv4 = (IPV4) o;
-        return Arrays.equals(ip, ipv4.ip) &&
-                Arrays.equals(netMask, ipv4.netMask) &&
-                Arrays.equals(netAddress, ipv4.netAddress);
+        return Arrays.equals(ip, ipv4.ip);
     }
 
     @Override
