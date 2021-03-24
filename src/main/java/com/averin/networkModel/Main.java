@@ -40,7 +40,7 @@ public class Main {
         Cable cable3 = new Cable(pc3, sw1);
 
         Cable cable4 = new Cable(sw1, sw2);
-        Cable cable5 = new Cable(sw1, pc4);
+        Cable cable5 = new Cable(sw2, pc4);
 
         Network network = new Network();
         network.addPathElement(pc1);

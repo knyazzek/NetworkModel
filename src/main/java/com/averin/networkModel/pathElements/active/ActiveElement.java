@@ -14,7 +14,7 @@ public abstract class ActiveElement implements IPathElement {
     private int id;
     private int timeDelay;
     private int cost;
-    private Set<IPathElement> connections = new HashSet<>();
+    private Set<PassiveElement> connections = new HashSet<>();
 
     public IPV4 getIP() {
         return new IPV4(ipV4);
@@ -45,19 +45,11 @@ public abstract class ActiveElement implements IPathElement {
     }
 
     @Override
-    public Set<IPathElement> getConnections() {
-        return new HashSet<>(connections);
+    public Set<PassiveElement> getConnections() {
+        return new HashSet<PassiveElement>(connections);
     }
 
-    @Override
-    public Set<IPathElement> getConnections(IPathElement pathElement) {
-        Set<IPathElement> connections =  getConnections();
-        connections.remove(pathElement);
-
-        return connections;
-    }
-
-    public void addConnection(IPathElement passiveElement) {
+    public void addConnection(PassiveElement passiveElement) {
         connections.add(passiveElement);
     }
 

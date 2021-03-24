@@ -28,6 +28,7 @@ public class ConsoleCommand {
                     } else {
                         System.out.println("Invalid parameters.");
                     }
+                } else {
                     System.out.println("Invalid flag for the command ");
                 }
                 break;

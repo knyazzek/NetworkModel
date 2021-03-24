@@ -1,11 +1,9 @@
 package com.averin.networkModel.pathElements.passive;
 
-import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.ActiveElement;
 
-import java.util.Set;
-
 public class Cable extends PassiveElement {
+    final int MAX_CONNECTION_COUNT = 2;
 
     public Cable(ActiveElement activeElement1, ActiveElement activeElement2) {
         addConnection(activeElement1);

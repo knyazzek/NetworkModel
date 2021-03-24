@@ -2,14 +2,12 @@ package com.averin.networkModel.pathElements.passive;
 
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.ActiveElement;
-
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class PassiveElement implements IPathElement {
 
-    private Set<IPathElement> connections = new HashSet<>();
+    private Set<ActiveElement> connections = new HashSet<>();
 
     @Override
     public int getID() {
@@ -27,20 +25,22 @@ public abstract class PassiveElement implements IPathElement {
     }
 
     @Override
-    public Set<IPathElement> getConnections() {
+    public Set<ActiveElement> getConnections() {
         return new HashSet<>(connections);
     }
 
-    @Override
-    public Set<IPathElement> getConnections(IPathElement sender) {
-        Set<IPathElement> connections = getConnections();
+    public ActiveElement getConnection(ActiveElement sender) {
+        Set<ActiveElement> connections = getConnections();
         connections.remove(sender);
-
-        return connections;
+        if (connections.size() == 1) {
+            return connections.iterator().next();
+        } else {
+            System.out.println("Passive element has more than 2 connections");
+            return null;
+        }
     }
 
-    @Override
-    public void addConnection(IPathElement activeElement) {
+    public void addConnection(ActiveElement activeElement) {
         connections.add(activeElement);
         activeElement.addConnection(this);
     }

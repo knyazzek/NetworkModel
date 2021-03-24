@@ -1,11 +1,12 @@
 package com.averin.networkModel.routeProviders;
 
-import com.averin.networkModel.IChannelLayerDevice;
 import com.averin.networkModel.IPV4;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.Network;
 import com.averin.networkModel.pathElements.active.ActiveElement;
+import com.averin.networkModel.pathElements.active.ArpDevice;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,9 +28,10 @@ public class RipRouteProvider implements IRouteProvider {
 
         if (Arrays.equals(sender.getIP().getNetAddress(), recipient.getIP().getNetAddress())) {
             MacAddress recipientMacAddress =
-                    ((IChannelLayerDevice)sender).sendArpRequest(recipient.getIP());
-
+                    ((ArpDevice)sender).sendArpRequest(recipient.getIP());
             System.out.println(recipientMacAddress.toString());
+
+
         } else {
             /*
             1.передаём пакет на маршрутизатор через gateway
