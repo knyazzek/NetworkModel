@@ -2,6 +2,8 @@ package com.averin.networkModel;
 
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.ActiveElement;
+import com.averin.networkModel.pathElements.active.Hub;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +12,7 @@ public class Network {
 
     public ActiveElement findByIP(IPV4 ip) {
         for (IPathElement pathElement : pathElements) {
+            if (pathElement instanceof Hub) continue;
             if (pathElement instanceof ActiveElement
                     && ((ActiveElement)pathElement).getIP().equals(ip)) {
                 return (ActiveElement)pathElement;

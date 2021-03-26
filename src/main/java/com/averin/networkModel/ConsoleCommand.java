@@ -19,8 +19,6 @@ public class ConsoleCommand {
             case 6 :
                 if (command[1].equals("-ip")) {
                     if (IPV4.isIPV4(command[4]) && IPV4.isIPV4(command[5])) {
-                        System.out.println("route –ip network, provider, ip1, ip2");
-
                         IPV4 senderIP = new IPV4(command[4]);
                         IPV4 recipientIP = new IPV4(command[5]);
 

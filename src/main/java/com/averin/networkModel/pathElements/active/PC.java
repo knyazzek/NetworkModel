@@ -2,11 +2,12 @@ package com.averin.networkModel.pathElements.active;
 
 import com.averin.networkModel.IPV4;
 import com.averin.networkModel.MacAddress;
-import java.util.HashMap;
-import java.util.Map;
+import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.pathElements.passive.PassiveElement;
+
+import java.util.*;
 
 public class PC extends ArpDevice {
-
     /*
     Что нужно учесть?
 
@@ -37,7 +38,22 @@ public class PC extends ArpDevice {
     }
 
     @Override
+    public List<IPathElement> getRouteByMacAddress(MacAddress macAddress, ArpDevice sender) {
+        if (this.getMacAddress().equals(macAddress)) {
+            List<IPathElement> route = new LinkedList<>();
+            route.add(this);
+            return route;
+        }
+        return super.getRouteByMacAddress(macAddress, sender);
+    }
+
+    @Override
     public String getInfo() {
         return "";
+    }
+
+    @Override
+    public String toString() {
+        return "PC ";
     }
 }

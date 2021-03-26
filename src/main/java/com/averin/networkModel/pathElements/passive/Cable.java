@@ -29,4 +29,9 @@ public class Cable extends PassiveElement {
     public String getInfo() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "Cable ";
+    }
 }

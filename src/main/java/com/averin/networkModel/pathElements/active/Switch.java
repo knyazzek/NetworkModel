@@ -2,11 +2,13 @@ package com.averin.networkModel.pathElements.active;
 
 import com.averin.networkModel.IPV4;
 import com.averin.networkModel.MacAddress;
+import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.passive.PassiveElement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Switch extends ArpDevice {
+public class Switch extends Hub {
     /*
      Что нужно учесть?
 
@@ -20,19 +22,21 @@ public class Switch extends ArpDevice {
         6.Количество портов от 4 до 48
         7.Топология:Только в виде дерева или звезды
      */
+
     private int maxConnectionsCount = 8;
-    private Map<PassiveElement, Integer> connectionsTable = new HashMap<>();
     //              Mac     Port
-    private Map<MacAddress,Integer> switchingTable = new HashMap<>();
+    private Map<MacAddress,PassiveElement> switchingTable = new HashMap<>();
 
     @Override
     public MacAddress respondArpRequest(ArpDevice sender, IPV4 ip) {
         return respondArpRequest(sender, sender, ip);
     }
 
+    //TODO make normal inheritance for respondArpRequest() in Switch
     public MacAddress respondArpRequest(ArpDevice sender, ArpDevice intermediateDevice, IPV4 ip) {
         if (!switchingTable.containsKey(sender.getMacAddress())) {
-            switchingTable.put(sender.getMacAddress(), getPortByIntermediateDevice(intermediateDevice));
+            switchingTable.put(sender.getMacAddress(),
+                    getPassiveElementByIntermediateDevice(intermediateDevice));
         }
 
         for (PassiveElement connection : this.getConnections()) {
@@ -44,18 +48,14 @@ public class Switch extends ArpDevice {
                 MacAddress response = ((PC) adjacentActiveElement).
                         respondArpRequest(sender, ip);
                 if (response != null) {
-                    switchingTable.put(response,
-                            getPortByIntermediateDevice(adjacentActiveElement));
-                    System.out.println(switchingTable);
+                    switchingTable.put(response, connection);
                     return response;
                 }
-            } else if (adjacentActiveElement instanceof Switch) {
-                MacAddress response = ((Switch) adjacentActiveElement).
+            } else if (adjacentActiveElement instanceof Hub) {
+                MacAddress response = ((Hub) adjacentActiveElement).
                         respondArpRequest(sender,this, ip);
                 if (response != null) {
-                    switchingTable.put(response,
-                            getPortByIntermediateDevice(adjacentActiveElement));
-                    System.out.println(switchingTable);
+                    switchingTable.put(response, connection);
                     return response;
                 }
             }
@@ -63,23 +63,31 @@ public class Switch extends ArpDevice {
         return null;
     }
 
-    //TODO: make an adequate getPortByIntermediateDevice() method
-    private int getPortByIntermediateDevice(ActiveElement activeElement) {
+    private PassiveElement getPassiveElementByIntermediateDevice(ActiveElement activeElement) {
         for (PassiveElement passiveElement : getConnections()) {
-            if (passiveElement.getConnection(this) == activeElement) {
-                for (Map.Entry connectionsTableRow : connectionsTable.entrySet()){
-                    if (connectionsTableRow.getKey() == passiveElement)
-                        return (int) connectionsTableRow.getValue();
-                }
-            }
+            if (passiveElement.getConnection(this) == activeElement)
+                return passiveElement;
         }
-        return -1;
+        return null;
+    }
+
+    @Override
+    public List<IPathElement> getRouteByMacAddress(MacAddress macAddress, ArpDevice sender) {
+        if (switchingTable.containsKey(macAddress)) {
+            PassiveElement passiveElement = switchingTable.get(macAddress);
+            List<IPathElement> route = ((ArpDevice)passiveElement.getConnection(this)).
+                    getRouteByMacAddress(macAddress, this);
+
+            route.add(0,this);
+            route.add(1,passiveElement);
+            return route;
+        }
+        return super.getRouteByMacAddress(macAddress, sender);
     }
 
     @Override
     public void addConnection(PassiveElement passiveElement) {
         if (getConnections().size() < maxConnectionsCount) {
-            connectionsTable.put(passiveElement, getConnections().size() + 1);
             super.addConnection(passiveElement);
         } else {
             System.out.println("The device has no free ports.");
@@ -89,5 +97,10 @@ public class Switch extends ArpDevice {
     @Override
     public String getInfo() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Switch ";
     }
 }

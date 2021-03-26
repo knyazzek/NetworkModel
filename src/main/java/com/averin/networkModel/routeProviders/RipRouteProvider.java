@@ -18,8 +18,8 @@ public class RipRouteProvider implements IRouteProvider {
 
         List<IPathElement> route = new ArrayList<>();
 
-        ActiveElement sender = net.findByIP(senderIP);
-        ActiveElement recipient = net.findByIP(recipientIP);
+        ArpDevice sender = (ArpDevice)net.findByIP(senderIP);
+        ArpDevice recipient = (ArpDevice) net.findByIP(recipientIP);
 
         if (sender == null || recipient == null) {
             System.out.println("One or more network elements with the specified IP do not exist");
@@ -29,9 +29,8 @@ public class RipRouteProvider implements IRouteProvider {
         if (Arrays.equals(sender.getIP().getNetAddress(), recipient.getIP().getNetAddress())) {
             MacAddress recipientMacAddress =
                     ((ArpDevice)sender).sendArpRequest(recipient.getIP());
-            System.out.println(recipientMacAddress.toString());
-
-
+            System.out.println(recipientMacAddress);
+            System.out.println(sender.getRouteByMacAddress(recipientMacAddress, sender));
         } else {
             /*
             1.передаём пакет на маршрутизатор через gateway
