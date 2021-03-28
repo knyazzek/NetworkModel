@@ -4,11 +4,13 @@ import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.pathElements.active.ActiveElement;
 import com.averin.networkModel.pathElements.active.IArpDevice;
 import com.averin.networkModel.pathElements.active.PC;
 import com.averin.networkModel.pathElements.active.Switch;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public abstract class PassiveElement implements IPathElement {
@@ -18,10 +20,7 @@ public abstract class PassiveElement implements IPathElement {
     private Set<IPathElement> connections = new HashSet<>();
 
     public MacAddress sendAll(ArpRequest arpRequest, IPathElement sender) {
-        System.out.println(getId());
-        for (IPathElement connection : getConnections()) {
-            if (connection == sender) continue;
-
+        for (IPathElement connection : getConnections(sender)) {
             MacAddress macAddress = null;
 
             if (connection instanceof PassiveElement) {
@@ -34,6 +33,27 @@ public abstract class PassiveElement implements IPathElement {
 
             if (macAddress != null)
                 return macAddress;
+        }
+        return null;
+    }
+    public List<IPathElement> sendAll(MacAddress recipientMacAddress, IPathElement sender) {
+        for (IPathElement connection : getConnections(sender)) {
+            if (connection instanceof PassiveElement) {
+                List<IPathElement> route = ((PassiveElement)connection).sendAll(recipientMacAddress, this);
+
+                if (route != null) {
+                    route.add(0, this);
+                    return route;
+                }
+            }
+            if (connection instanceof IArpDevice) {
+                List<IPathElement> route = ((IArpDevice)connection).
+                        getRouteByMacAddress(recipientMacAddress, this);
+                if (route != null) {
+                    route.add(0, this);
+                    return route;
+                }
+            }
         }
         return null;
     }

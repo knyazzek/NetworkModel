@@ -4,7 +4,10 @@ import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.pathElements.passive.PassiveElement;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Switch extends ActiveElement implements IArpDevice{
@@ -35,12 +38,25 @@ public class Switch extends ActiveElement implements IArpDevice{
             switchingTable.put(arpRequest.getSenderMacAddress(), lastSender);
         }
         MacAddress macAddress = IArpDevice.super.sendArpRequest(arpRequest, this);
-        System.out.println(switchingTable);
         return macAddress;
+    }
+
+    @Override
+    public List<IPathElement> getRouteByMacAddress(MacAddress recipientMacAddress, IPathElement sender) {
+        System.out.println(switchingTable);
+        if (switchingTable.containsKey(recipientMacAddress)) {
+            PassiveElement gateway = (PassiveElement)switchingTable.get(recipientMacAddress);
+            return gateway.sendAll(recipientMacAddress, this);
+        }
+        return IArpDevice.super.getRouteByMacAddress(recipientMacAddress, sender);
     }
 
     public void addSwitching(MacAddress macAddress, IPathElement pathElement) {
         switchingTable.put(macAddress, pathElement);
+    }
+
+    public Map<MacAddress, IPathElement> getSwitchingTable() {
+        return switchingTable;
     }
 
     @Override

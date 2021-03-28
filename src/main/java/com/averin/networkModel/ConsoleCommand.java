@@ -18,7 +18,6 @@ public class ConsoleCommand {
 
             case 6 :
                 if (command[1].equals("-ip")) {
-                    System.out.println("route -ip network, provider, ip1, ip2");
                     if (IPv4.isNodeAddress(command[4]) && IPv4.isNodeAddress(command[5])) {
                         IPv4 senderIP = new IPv4(command[4]);
                         IPv4 recipientIP = new IPv4(command[5]);

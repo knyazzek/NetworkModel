@@ -4,6 +4,9 @@ import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.pathElements.passive.PassiveElement;
+import com.averin.networkModel.routeProviders.IRouteProvider;
+
 import java.util.*;
 
 public class PC extends ActiveElement implements IArpDevice{
@@ -32,6 +35,16 @@ public class PC extends ActiveElement implements IArpDevice{
             return getMacAddress();
         }
         return IArpDevice.super.sendArpRequest(arpRequest, lastSender);
+    }
+
+    @Override
+    public List<IPathElement> getRouteByMacAddress(MacAddress recipientMacAddress, IPathElement sender) {
+        if (this.getMacAddress().equals(recipientMacAddress)) {
+            List<IPathElement> route = new LinkedList<>();
+            route.add(this);
+            return route;
+        }
+        return IArpDevice.super.getRouteByMacAddress(recipientMacAddress, sender);
     }
 
     @Override
