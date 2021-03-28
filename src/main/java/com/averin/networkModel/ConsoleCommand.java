@@ -9,7 +9,7 @@ public class ConsoleCommand {
     public static void route(String[] command, Network net, IRouteProvider routeProvider) {
         switch (command.length) {
             case 5 :
-                if (IPV4.isIPV4(command[3]) && IPV4.isIPV4(command[4])) {
+                if (IPv4.isNodeAddress(command[3]) && IPv4.isNodeAddress(command[4])) {
                     System.out.println("route network, provider, id1, id2");
                 } else {
                     System.out.println("Invalid parameters.");
@@ -18,9 +18,10 @@ public class ConsoleCommand {
 
             case 6 :
                 if (command[1].equals("-ip")) {
-                    if (IPV4.isIPV4(command[4]) && IPV4.isIPV4(command[5])) {
-                        IPV4 senderIP = new IPV4(command[4]);
-                        IPV4 recipientIP = new IPV4(command[5]);
+                    System.out.println("route -ip network, provider, ip1, ip2");
+                    if (IPv4.isNodeAddress(command[4]) && IPv4.isNodeAddress(command[5])) {
+                        IPv4 senderIP = new IPv4(command[4]);
+                        IPv4 recipientIP = new IPv4(command[5]);
 
                         routeProvider.getRoute(senderIP, recipientIP, net);
                     } else {
@@ -38,7 +39,6 @@ public class ConsoleCommand {
     }
 
     public static void help() {
-
         Method[] methods = ConsoleCommand.class.getMethods();
 
         for (Method method : methods) {
@@ -46,5 +46,10 @@ public class ConsoleCommand {
                 System.out.println("    -" + method.getName());
             }
         }
+    }
+
+    public static void exit() {
+        System.out.println("Program exit");
+        System.exit(0);
     }
 }

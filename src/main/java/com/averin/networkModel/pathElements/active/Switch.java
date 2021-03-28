@@ -1,14 +1,13 @@
 package com.averin.networkModel.pathElements.active;
 
-import com.averin.networkModel.IPV4;
+import com.averin.networkModel.ArpRequest;
+import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
-import com.averin.networkModel.pathElements.passive.PassiveElement;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class Switch extends Hub {
+public class Switch extends ActiveElement implements IArpDevice{
     /*
      Что нужно учесть?
 
@@ -23,84 +22,34 @@ public class Switch extends Hub {
         7.Топология:Только в виде дерева или звезды
      */
 
-    private int maxConnectionsCount = 8;
-    //              Mac     Port
-    private Map<MacAddress,PassiveElement> switchingTable = new HashMap<>();
+    private final int MAX_CONNECTIONS_COUNT = 4;
+    private Map<MacAddress, IPathElement> switchingTable = new HashMap<>();
 
-    @Override
-    public MacAddress respondArpRequest(ArpDevice sender, IPV4 ip) {
-        return respondArpRequest(sender, sender, ip);
-    }
-
-    //TODO make normal inheritance for respondArpRequest() in Switch
-    public MacAddress respondArpRequest(ArpDevice sender, ArpDevice intermediateDevice, IPV4 ip) {
-        if (!switchingTable.containsKey(sender.getMacAddress())) {
-            switchingTable.put(sender.getMacAddress(),
-                    getPassiveElementByIntermediateDevice(intermediateDevice));
-        }
-
-        for (PassiveElement connection : this.getConnections()) {
-            ActiveElement adjacentActiveElement = connection.getConnection(this);
-
-            if (adjacentActiveElement == intermediateDevice) continue;
-
-            if (adjacentActiveElement instanceof PC) {
-                MacAddress response = ((PC) adjacentActiveElement).
-                        respondArpRequest(sender, ip);
-                if (response != null) {
-                    switchingTable.put(response, connection);
-                    return response;
-                }
-            } else if (adjacentActiveElement instanceof Hub) {
-                MacAddress response = ((Hub) adjacentActiveElement).
-                        respondArpRequest(sender,this, ip);
-                if (response != null) {
-                    switchingTable.put(response, connection);
-                    return response;
-                }
-            }
-        }
-        return null;
-    }
-
-    private PassiveElement getPassiveElementByIntermediateDevice(ActiveElement activeElement) {
-        for (PassiveElement passiveElement : getConnections()) {
-            if (passiveElement.getConnection(this) == activeElement)
-                return passiveElement;
-        }
-        return null;
+    public Switch(IPv4 ip, MacAddress macAddress) {
+        super(ip, macAddress);
     }
 
     @Override
-    public List<IPathElement> getRouteByMacAddress(MacAddress macAddress, ArpDevice sender) {
-        if (switchingTable.containsKey(macAddress)) {
-            PassiveElement passiveElement = switchingTable.get(macAddress);
-            List<IPathElement> route = ((ArpDevice)passiveElement.getConnection(this)).
-                    getRouteByMacAddress(macAddress, this);
-
-            route.add(0,this);
-            route.add(1,passiveElement);
-            return route;
+    public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
+        if (!switchingTable.containsKey(arpRequest.getSenderMacAddress())) {
+            switchingTable.put(arpRequest.getSenderMacAddress(), lastSender);
         }
-        return super.getRouteByMacAddress(macAddress, sender);
+        MacAddress macAddress = IArpDevice.super.sendArpRequest(arpRequest, this);
+        System.out.println(switchingTable);
+        return macAddress;
     }
 
-    @Override
-    public void addConnection(PassiveElement passiveElement) {
-        if (getConnections().size() < maxConnectionsCount) {
-            super.addConnection(passiveElement);
-        } else {
-            System.out.println("The device has no free ports.");
-        }
+    public void addSwitching(MacAddress macAddress, IPathElement pathElement) {
+        switchingTable.put(macAddress, pathElement);
     }
 
     @Override
     public String getInfo() {
-        return null;
+        return "";
     }
 
     @Override
     public String toString() {
-        return "Switch ";
+        return "Switch";
     }
 }

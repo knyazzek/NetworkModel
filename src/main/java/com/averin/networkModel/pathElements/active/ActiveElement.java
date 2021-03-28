@@ -1,39 +1,47 @@
 package com.averin.networkModel.pathElements.active;
 
-import com.averin.networkModel.IPV4;
-import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
-import com.averin.networkModel.pathElements.passive.PassiveElement;
-
+import com.averin.networkModel.pathElements.IPathElement;
 import java.util.*;
 
 public abstract class ActiveElement implements IPathElement {
-
-    private IPV4 ipV4;
-    private MacAddress macAddress;
     private int id;
+    private IPv4 ip;
+    private MacAddress macAddress;
     private int timeDelay;
-    private int cost;
-    private Set<PassiveElement> connections = new HashSet<>();
+    private int costs;
+    private Set<IPathElement> connections = new HashSet<>();
 
-    public IPV4 getIP() {
-        return new IPV4(ipV4);
+    public ActiveElement(IPv4 ip, MacAddress macAddress) {
+        setIp(ip);
+        setMacAddress(macAddress);
     }
 
-    public void setIpV4 (IPV4 ip) {
-        this.ipV4 = new IPV4(ip);
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public IPv4 getIp() {
+        return new IPv4(ip);
+    }
+
+    public void setIp(IPv4 ip) {
+        this.ip = ip;
     }
 
     public MacAddress getMacAddress() {
-        return macAddress;
+        return new MacAddress(macAddress);
     }
 
-    public void setMacAddress (MacAddress macAddress) {
-        this.macAddress = new MacAddress(macAddress);
-    }
-
-    public int getID() {
-        return id;
+    public void setMacAddress(MacAddress macAddress) {
+        this.macAddress = macAddress;
     }
 
     public int getTimeDelay() {
@@ -41,16 +49,17 @@ public abstract class ActiveElement implements IPathElement {
     }
 
     public int getCosts() {
-        return cost;
+        return costs;
     }
 
     @Override
-    public Set<PassiveElement> getConnections() {
-        return new HashSet<PassiveElement>(connections);
+    public Set<IPathElement> getConnections() {
+        return new HashSet<IPathElement>(connections);
     }
 
-    public void addConnection(PassiveElement passiveElement) {
-        connections.add(passiveElement);
+    @Override
+    public void addConnection(IPathElement pathElement) {
+        connections.add(pathElement);
     }
 
     public abstract String getInfo();

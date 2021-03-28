@@ -2,37 +2,33 @@ package com.averin.networkModel;
 
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.ActiveElement;
-import com.averin.networkModel.pathElements.active.Hub;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Network {
-    private Set<IPathElement> pathElements = new HashSet<>();
+     Map<Integer,IPathElement> pathElements = new HashMap<>();
 
-    public ActiveElement findByIP(IPV4 ip) {
-        for (IPathElement pathElement : pathElements) {
-            if (pathElement instanceof Hub) continue;
+    public ActiveElement findByIp(IPv4 ip) {
+        for (IPathElement pathElement : pathElements.values()) {
             if (pathElement instanceof ActiveElement
-                    && ((ActiveElement)pathElement).getIP().equals(ip)) {
+                    && ((ActiveElement)pathElement).getIp().equals(ip)) {
                 return (ActiveElement)pathElement;
             }
         }
         return null;
     }
 
+    public IPathElement findById(int id) {
+        return pathElements.get(id);
+    }
+
     public void addPathElement(IPathElement pathElement) {
-        this.pathElements.add(pathElement);
+        pathElement.setId(pathElements.size());
+        pathElements.put(pathElement.getId(),pathElement);
     }
 
-    public void addPathElements(Set<IPathElement> pathElements) {
-        this.pathElements.addAll(pathElements);
+    public void addPathElements(IPathElement ... pathElements) {
+        for (IPathElement pathElement : pathElements)
+            addPathElement(pathElement);
     }
-
-    /*
-    Что нужно реализовать?
-
-    1.Поиск элемента по ID
-    2.Поиск элемента по IP
-    */
 }

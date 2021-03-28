@@ -1,13 +1,12 @@
 package com.averin.networkModel.pathElements.active;
 
-import com.averin.networkModel.IPV4;
+import com.averin.networkModel.ArpRequest;
+import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
-import com.averin.networkModel.pathElements.passive.PassiveElement;
-
 import java.util.*;
 
-public class PC extends ArpDevice {
+public class PC extends ActiveElement implements IArpDevice{
     /*
     Что нужно учесть?
 
@@ -16,35 +15,23 @@ public class PC extends ArpDevice {
     3.ArpTable
     4.При создании подкладывать сеть, к которой привязан
     */
+    private Map<IPv4, MacAddress> arpTable = new HashMap<>();
 
-    private Map<IPV4, MacAddress> arpTable = new HashMap<>();
+    public PC(IPv4 ip, MacAddress macAddress) {
+        super(ip,macAddress);
+    }
 
-    public PC(IPV4 ip, MacAddress macAddress) {
-        this.setIpV4(ip);
-        this.setMacAddress(macAddress);
+    public MacAddress sendArpRequest(ArpRequest arpRequest) {
+        return sendArpRequest(arpRequest, this);
     }
 
     @Override
-    public MacAddress respondArpRequest(ArpDevice pathElement, IPV4 ip) {
-        ActiveElement sender = (ActiveElement) pathElement;
-
-        if (!arpTable.containsKey(sender.getIP()))
-            arpTable.put(sender.getIP(), sender.getMacAddress());
-
-        if (getIP().equals(ip))
+    public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
+        if (this.getIp().equals(arpRequest.getRecipientIp())) {
+            arpTable.put(arpRequest.getSenderIp(), arpRequest.getSenderMacAddress());
             return getMacAddress();
-
-        return null;
-    }
-
-    @Override
-    public List<IPathElement> getRouteByMacAddress(MacAddress macAddress, ArpDevice sender) {
-        if (this.getMacAddress().equals(macAddress)) {
-            List<IPathElement> route = new LinkedList<>();
-            route.add(this);
-            return route;
         }
-        return super.getRouteByMacAddress(macAddress, sender);
+        return IArpDevice.super.sendArpRequest(arpRequest, lastSender);
     }
 
     @Override
@@ -54,6 +41,6 @@ public class PC extends ArpDevice {
 
     @Override
     public String toString() {
-        return "PC ";
+        return "PC";
     }
 }

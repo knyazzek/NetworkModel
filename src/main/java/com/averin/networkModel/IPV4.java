@@ -2,24 +2,24 @@ package com.averin.networkModel;
 
 import java.util.Arrays;
 
-public class IPV4 {
-    private int[] ip = new int[4];
+public class IPv4 {
+    private int[] nodeAddress = new int[4];
     private int[] netMask = new int[4];
     private int[] netAddress = new int[4];
 
     //TODO IPV4 validation
-    public IPV4(String ip) {
-        if (IPV4.isIPV4(ip)) {
-            setIp(ip);
+    public IPv4(String nodeAddress) {
+        if (IPv4.isNodeAddress(nodeAddress)) {
+            setNodeAddress(nodeAddress);
         } else {
             System.out.println("Incorrect ip");
         }
     }
 
-    public IPV4(String ip, String netMask) {
-        this(ip);
+    public IPv4(String nodeAddress, String netMask) {
+        this(nodeAddress);
 
-        if (IPV4.isIPV4(netMask)) {
+        if (IPv4.isNodeAddress(netMask)) {
             setNetMask(netMask);
             setNetAddress();
         } else {
@@ -28,18 +28,18 @@ public class IPV4 {
     }
 
     //TODO IPV4 validation
-    public IPV4(int[] ip, int[] netMask) {
-        this.ip = Arrays.copyOf(ip, ip.length);
+    public IPv4(int[] nodeAddress, int[] netMask) {
+        this.nodeAddress = Arrays.copyOf(nodeAddress, nodeAddress.length);
         this.netMask = Arrays.copyOf(netMask, netMask.length);
         setNetAddress();
     }
 
-    public IPV4(IPV4 ipv4) {
-        this(ipv4.getIp(), ipv4.getNetMask());
+    public IPv4(IPv4 ipv4) {
+        this(ipv4.getNodeAddress(), ipv4.getNetMask());
     }
 
-    public static boolean isIPV4 (String ip) {
-        String[] octets = ip.split("\\.");
+    public static boolean isNodeAddress (String nodeAddress) {
+        String[] octets = nodeAddress.split("\\.");
 
         if (octets.length != 4)
             return false;
@@ -52,22 +52,21 @@ public class IPV4 {
             if (octetNumber > 255)
                 return false;
         }
-
         return true;
     }
 
-    public int[] getIp() {
-        return Arrays.copyOf(ip, ip.length);
+    public int[] getNodeAddress() {
+        return Arrays.copyOf(nodeAddress, nodeAddress.length);
     }
 
-    private void setIp(String ip) {
-        String[] octets = ip.split("\\.");
+    private void setNodeAddress(String nodeAddress) {
+        String[] octets = nodeAddress.split("\\.");
         if (octets.length != 4) {
             //Throw Exception
         }
 
         for (int i = 0; i < octets.length; i++) {
-            this.ip[i] = Integer.parseInt(octets[i]);
+            this.nodeAddress[i] = Integer.parseInt(octets[i]);
         }
     }
 
@@ -96,7 +95,7 @@ public class IPV4 {
     //TODO setNetAddress
     private void setNetAddress() {
         for (int i = 0; i < 4; i++) {
-            netAddress[i] = ip[i] & netAddress[i];
+            netAddress[i] = nodeAddress[i] & netAddress[i];
         }
     }
 
@@ -104,13 +103,13 @@ public class IPV4 {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        IPV4 ipv4 = (IPV4) o;
-        return Arrays.equals(ip, ipv4.ip);
+        IPv4 ipv4 = (IPv4) o;
+        return Arrays.equals(nodeAddress, ipv4.nodeAddress);
     }
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(ip);
+        int result = Arrays.hashCode(nodeAddress);
         result = 31 * result + Arrays.hashCode(netMask);
         result = 31 * result + Arrays.hashCode(netAddress);
         return result;
@@ -119,7 +118,7 @@ public class IPV4 {
     @Override
     public String toString() {
         return "IPV4{" +
-                "ip=" + Arrays.toString(ip) +
+                "ip=" + Arrays.toString(nodeAddress) +
                 ", netMask=" + Arrays.toString(netMask) +
                 ", netAddress=" + Arrays.toString(netAddress) +
                 '}';

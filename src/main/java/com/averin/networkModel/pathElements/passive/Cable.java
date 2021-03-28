@@ -1,18 +1,32 @@
 package com.averin.networkModel.pathElements.passive;
 
-import com.averin.networkModel.pathElements.active.ActiveElement;
+import com.averin.networkModel.pathElements.IPathElement;
 
 public class Cable extends PassiveElement {
-    final int MAX_CONNECTION_COUNT = 2;
+    final byte MAX_CONNECTION_COUNT = 2;
 
-    public Cable(ActiveElement activeElement1, ActiveElement activeElement2) {
-        addConnection(activeElement1);
-        addConnection(activeElement2);
+    public Cable() {
+
+    }
+
+    public Cable(IPathElement pe1, IPathElement pe2) {
+        addConnection(pe1);
+        addConnection(pe2);
+    }
+
+    public void connect(IPathElement pe1, IPathElement pe2) {
+        addConnection(pe1);
+        addConnection(pe2);
     }
 
     @Override
-    public int getID() {
-        return 0;
+    public void addConnection(IPathElement pathElement) {
+        if (getConnections().size() < MAX_CONNECTION_COUNT) {
+            super.addConnection(pathElement);
+            pathElement.addConnection(this);
+        } else {
+            System.out.println("Cable already connects 2 network elements");
+        }
     }
 
     @Override

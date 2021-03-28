@@ -1,7 +1,6 @@
 package com.averin.networkModel.pathElements.active;
 
 public class Router {
-
         /*
         Имеет белый и серый ip
 
@@ -25,6 +24,4 @@ public class Router {
 
         Возможность добавить встроенного firewall
         */
-
-
 }
