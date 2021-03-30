@@ -1,7 +1,6 @@
 package com.averin.networkModel.pathElements.active;
 
 import com.averin.networkModel.ArpRequest;
-import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.passive.PassiveElement;
@@ -9,13 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Switch extends ActiveElement implements IArpDevice{
+public class Switch extends ActiveElement implements IPathElement {
     private final int MAX_CONNECTIONS_COUNT = 4;
     private Map<MacAddress, IPathElement> switchingTable = new HashMap<>();
-
-    public Switch(IPv4 ip, MacAddress macAddress) {
-        super(ip, macAddress);
-    }
 
     @Override
     public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
@@ -23,7 +18,7 @@ public class Switch extends ActiveElement implements IArpDevice{
             switchingTable.put(arpRequest.getSenderMacAddress(), lastSender);
         }
 
-        MacAddress macAddress = IArpDevice.super.sendArpRequest(arpRequest, this);
+        MacAddress macAddress = super.sendArpRequest(arpRequest, this);
         return macAddress;
     }
 
@@ -36,7 +31,7 @@ public class Switch extends ActiveElement implements IArpDevice{
             return route;
         }
 
-        return IArpDevice.super.getRouteByMacAddress(recipientMacAddress, sender);
+        return getRouteByMacAddress(recipientMacAddress, sender);
     }
 
     public void addSwitching(MacAddress macAddress, IPathElement pathElement) {

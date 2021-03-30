@@ -5,10 +5,7 @@ import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
 
-import java.util.*;
-
-public class PC extends ActiveElement implements IArpDevice{
-    private Map<IPv4, MacAddress> arpTable = new HashMap<>();
+public class PC extends L3Device{
     private IPv4 gateway;
 
     public PC(IPv4 ip, MacAddress macAddress) {
@@ -22,20 +19,10 @@ public class PC extends ActiveElement implements IArpDevice{
     @Override
     public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
         if (this.getIp().equals(arpRequest.getRecipientIp())) {
-            arpTable.put(arpRequest.getSenderIp(), arpRequest.getSenderMacAddress());
+            getArpTable().put(arpRequest.getSenderIp(), arpRequest.getSenderMacAddress());
             return getMacAddress();
         }
-        return IArpDevice.super.sendArpRequest(arpRequest, lastSender);
-    }
-
-    @Override
-    public List<IPathElement> getRouteByMacAddress(MacAddress recipientMacAddress, IPathElement sender) {
-        if (this.getMacAddress().equals(recipientMacAddress)) {
-            List<IPathElement> route = new LinkedList<>();
-            route.add(this);
-            return route;
-        }
-        return IArpDevice.super.getRouteByMacAddress(recipientMacAddress, sender);
+        return super.sendArpRequest(arpRequest, lastSender);
     }
 
     @Override

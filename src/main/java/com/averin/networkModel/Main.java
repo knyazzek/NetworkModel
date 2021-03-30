@@ -31,7 +31,7 @@ public class Main {
         PC pc3 = new PC(ip3, mac3);
         PC pc4 = new PC(ip4, mac4);
 
-        Switch sw1 = new Switch(ip5, mac5);
+        Switch sw1 = new Switch();
 
         Router router1 = new Router(ip6, mac6);
 
@@ -42,15 +42,14 @@ public class Main {
         Cable cable5 = new Cable(pc4, hub2);
         Cable cable6 = new Cable(hub2, sw1);
 
-        Cable cable7 = new Cable(hub2, router1);
+        Cable cable7 = new Cable(sw1, router1);
 
         router1.addRoutingTableRow(new int[]{122, 122, 122, 0},
                 new int[]{255,255,255,0},
                 new int[]{122,122,122,6},
                 cable7,
                 ip6,
-                0
-                );
+                0);
 
         Network network = new Network();
 

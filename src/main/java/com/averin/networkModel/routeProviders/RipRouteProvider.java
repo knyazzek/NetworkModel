@@ -5,7 +5,7 @@ import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.Network;
-import com.averin.networkModel.pathElements.active.ActiveElement;
+import com.averin.networkModel.pathElements.active.L3Device;
 import com.averin.networkModel.pathElements.active.PC;
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +14,8 @@ public class RipRouteProvider implements IRouteProvider {
 
     @Override
     public List<IPathElement> getRoute(IPv4 senderIP, IPv4 recipientIP, Network net) {
-        ActiveElement sender = net.findElementByIp(senderIP);
-        ActiveElement recipient = net.findElementByIp(recipientIP);
+        L3Device sender = net.findElementByIp(senderIP);
+        L3Device recipient = net.findElementByIp(recipientIP);
 
         if (sender == null || recipient == null) {
             System.out.println("One or more network elements with the specified IP do not exist");

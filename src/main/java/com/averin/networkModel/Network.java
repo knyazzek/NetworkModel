@@ -2,17 +2,19 @@ package com.averin.networkModel;
 
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.ActiveElement;
+import com.averin.networkModel.pathElements.active.L3Device;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Network {
      private Map<Integer,IPathElement> pathElements = new HashMap<>();
 
-    public ActiveElement findElementByIp(IPv4 ip) {
+    public L3Device findElementByIp(IPv4 ip) {
         for (IPathElement pathElement : pathElements.values()) {
-            if (pathElement instanceof ActiveElement
-                    && ((ActiveElement)pathElement).getIp().equals(ip)) {
-                return (ActiveElement)pathElement;
+            if (pathElement instanceof L3Device
+                    && ((L3Device)pathElement).getIp().equals(ip)) {
+                return (L3Device) pathElement;
             }
         }
         return null;

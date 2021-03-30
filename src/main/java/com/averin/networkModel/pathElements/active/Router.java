@@ -4,12 +4,10 @@ import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
-
 import java.util.*;
 
-public class Router extends ActiveElement implements IArpDevice{
+public class Router extends L3Device{
     private Set<RoutingTableRow> routingTable = new HashSet<>();
-    private Map<IPv4, MacAddress> arpTable = new HashMap<>();
 
     public Router(IPv4 ip, MacAddress macAddress) {
         super(ip, macAddress);
@@ -17,12 +15,12 @@ public class Router extends ActiveElement implements IArpDevice{
 
     @Override
     public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
-        if (!arpTable.containsKey(arpRequest.getSenderIp())) {
-            arpTable.put(arpRequest.getSenderIp(), arpRequest.getSenderMacAddress());
+        if (!getArpTable().containsKey(arpRequest.getSenderIp())) {
+            getArpTable().put(arpRequest.getSenderIp(), arpRequest.getSenderMacAddress());
         }
 
-        if (arpTable.containsKey(arpRequest.getRecipientIp())) {
-            return arpTable.get(arpRequest.getRecipientIp());
+        if (getArpTable().containsKey(arpRequest.getRecipientIp())) {
+            return getArpTable().get(arpRequest.getRecipientIp());
         }
 
         for (RoutingTableRow routingTableRow : routingTable) {
@@ -32,16 +30,6 @@ public class Router extends ActiveElement implements IArpDevice{
             }
         }
         return null;
-    }
-
-    @Override
-    public List<IPathElement> getRouteByMacAddress(MacAddress recipientMacAddress, IPathElement sender) {
-        if (this.getMacAddress().equals(recipientMacAddress)) {
-            List<IPathElement> route = new LinkedList<>();
-            route.add(this);
-            return route;
-        }
-        return IArpDevice.super.getRouteByMacAddress(recipientMacAddress, sender);
     }
 
     @Override

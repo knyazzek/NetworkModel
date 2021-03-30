@@ -3,9 +3,8 @@ package com.averin.networkModel.pathElements.passive;
 import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
-import com.averin.networkModel.pathElements.active.IArpDevice;
-import com.averin.networkModel.pathElements.active.PC;
-import com.averin.networkModel.pathElements.active.Switch;
+import com.averin.networkModel.pathElements.active.ActiveElement;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +21,8 @@ public abstract class PassiveElement implements IPathElement {
 
             if (connection instanceof PassiveElement) {
                 macAddress = ((PassiveElement)connection).sendAll(arpRequest, this);
-            }else if (connection instanceof IArpDevice) {
-                macAddress = ((IArpDevice)connection).sendArpRequest(arpRequest, this);
+            }else if (connection instanceof ActiveElement) {
+                macAddress = ((ActiveElement)connection).sendArpRequest(arpRequest, this);
             }
 
             if (macAddress != null)
@@ -38,8 +37,8 @@ public abstract class PassiveElement implements IPathElement {
             if (connection instanceof PassiveElement) {
                 route = ((PassiveElement)connection).sendAll(recipientMacAddress, this);
             }
-            if (connection instanceof IArpDevice) {
-                route = ((IArpDevice)connection).
+            if (connection instanceof ActiveElement) {
+                route = ((ActiveElement)connection).
                         getRouteByMacAddress(recipientMacAddress, this);
             }
 

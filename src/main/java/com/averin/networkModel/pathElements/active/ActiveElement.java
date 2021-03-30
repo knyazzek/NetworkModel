@@ -1,21 +1,49 @@
 package com.averin.networkModel.pathElements.active;
 
-import com.averin.networkModel.IPv4;
+import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
+import com.averin.networkModel.pathElements.passive.PassiveElement;
 import java.util.*;
 
 public abstract class ActiveElement implements IPathElement {
     private int id;
-    private IPv4 ip;
-    private MacAddress macAddress;
     private int timeDelay;
     private int costs;
     private Set<IPathElement> connections = new HashSet<>();
 
-    public ActiveElement(IPv4 ip, MacAddress macAddress) {
-        setIp(ip);
-        setMacAddress(macAddress);
+    public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
+        for (IPathElement connection : getConnections(lastSender)) {
+            if (connection instanceof PassiveElement) {
+                MacAddress result = ((PassiveElement)connection).sendAll(arpRequest, this);
+
+                if (result != null) {
+                    if (this instanceof Switch) {
+                        Switch sw = (Switch)this;
+                        if (!sw.getSwitchingTable().containsKey(result)){
+                            sw.addSwitching(result, connection);
+                        }
+                    }
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<IPathElement> getRouteByMacAddress(MacAddress recipientMacAddress, IPathElement sender) {
+        for (IPathElement connection : getConnections(sender)) {
+            if (connection instanceof PassiveElement) {
+                List<IPathElement> route =
+                        ((PassiveElement)connection).sendAll(recipientMacAddress, this);
+
+                if (route != null) {
+                    route.add(0, this);
+                    return route;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -26,22 +54,6 @@ public abstract class ActiveElement implements IPathElement {
     @Override
     public void setId(int id) {
         this.id = id;
-    }
-
-    public IPv4 getIp() {
-        return new IPv4(ip);
-    }
-
-    public void setIp(IPv4 ip) {
-        this.ip = ip;
-    }
-
-    public MacAddress getMacAddress() {
-        return new MacAddress(macAddress);
-    }
-
-    public void setMacAddress(MacAddress macAddress) {
-        this.macAddress = macAddress;
     }
 
     public int getTimeDelay() {
