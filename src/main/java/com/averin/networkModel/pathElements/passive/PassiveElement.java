@@ -1,15 +1,12 @@
 package com.averin.networkModel.pathElements.passive;
 
 import com.averin.networkModel.ArpRequest;
-import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
-import com.averin.networkModel.pathElements.active.ActiveElement;
 import com.averin.networkModel.pathElements.active.IArpDevice;
 import com.averin.networkModel.pathElements.active.PC;
 import com.averin.networkModel.pathElements.active.Switch;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +22,7 @@ public abstract class PassiveElement implements IPathElement {
 
             if (connection instanceof PassiveElement) {
                 macAddress = ((PassiveElement)connection).sendAll(arpRequest, this);
-            }else if (connection instanceof PC) {
-                macAddress = ((PC)connection).sendArpRequest(arpRequest, this);
-            }else if (connection instanceof Switch) {
+            }else if (connection instanceof IArpDevice) {
                 macAddress = ((IArpDevice)connection).sendArpRequest(arpRequest, this);
             }
 
@@ -38,21 +33,19 @@ public abstract class PassiveElement implements IPathElement {
     }
     public List<IPathElement> sendAll(MacAddress recipientMacAddress, IPathElement sender) {
         for (IPathElement connection : getConnections(sender)) {
-            if (connection instanceof PassiveElement) {
-                List<IPathElement> route = ((PassiveElement)connection).sendAll(recipientMacAddress, this);
+            List<IPathElement> route = null;
 
-                if (route != null) {
-                    route.add(0, this);
-                    return route;
-                }
+            if (connection instanceof PassiveElement) {
+                route = ((PassiveElement)connection).sendAll(recipientMacAddress, this);
             }
             if (connection instanceof IArpDevice) {
-                List<IPathElement> route = ((IArpDevice)connection).
+                route = ((IArpDevice)connection).
                         getRouteByMacAddress(recipientMacAddress, this);
-                if (route != null) {
-                    route.add(0, this);
-                    return route;
-                }
+            }
+
+            if (route != null) {
+                route.add(0, this);
+                return route;
             }
         }
         return null;

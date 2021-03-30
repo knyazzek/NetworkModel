@@ -4,21 +4,12 @@ import com.averin.networkModel.ArpRequest;
 import com.averin.networkModel.IPv4;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
-import com.averin.networkModel.pathElements.passive.PassiveElement;
-import com.averin.networkModel.routeProviders.IRouteProvider;
 
 import java.util.*;
 
 public class PC extends ActiveElement implements IArpDevice{
-    /*
-    Что нужно учесть?
-
-    1.количество подключенных уствройств
-    2.Gateway
-    3.ArpTable
-    4.При создании подкладывать сеть, к которой привязан
-    */
     private Map<IPv4, MacAddress> arpTable = new HashMap<>();
+    private IPv4 gateway;
 
     public PC(IPv4 ip, MacAddress macAddress) {
         super(ip,macAddress);

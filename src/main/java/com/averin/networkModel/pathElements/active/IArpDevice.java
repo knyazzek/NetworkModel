@@ -7,7 +7,6 @@ import com.averin.networkModel.pathElements.passive.PassiveElement;
 import java.util.List;
 
 public interface IArpDevice extends IPathElement {
-
     default MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
         for (IPathElement connection : getConnections(lastSender)) {
             if (connection instanceof PassiveElement) {

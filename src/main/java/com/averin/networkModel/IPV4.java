@@ -55,6 +55,7 @@ public class IPv4 {
         return true;
     }
 
+
     public int[] getNodeAddress() {
         return Arrays.copyOf(nodeAddress, nodeAddress.length);
     }

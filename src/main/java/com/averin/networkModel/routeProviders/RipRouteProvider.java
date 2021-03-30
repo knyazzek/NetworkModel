@@ -6,9 +6,7 @@ import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.Network;
 import com.averin.networkModel.pathElements.active.ActiveElement;
-import com.averin.networkModel.pathElements.active.IArpDevice;
 import com.averin.networkModel.pathElements.active.PC;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +14,8 @@ public class RipRouteProvider implements IRouteProvider {
 
     @Override
     public List<IPathElement> getRoute(IPv4 senderIP, IPv4 recipientIP, Network net) {
-        ActiveElement sender = net.findByIp(senderIP);
-        ActiveElement recipient = net.findByIp(recipientIP);
+        ActiveElement sender = net.findElementByIp(senderIP);
+        ActiveElement recipient = net.findElementByIp(recipientIP);
 
         if (sender == null || recipient == null) {
             System.out.println("One or more network elements with the specified IP do not exist");
@@ -27,9 +25,13 @@ public class RipRouteProvider implements IRouteProvider {
         if (Arrays.equals(sender.getIp().getNetMask(), recipient.getIp().getNetMask())) {
             ArpRequest arpRequest = new ArpRequest((PC)sender, recipientIP);
             MacAddress macAddress = ((PC)sender).sendArpRequest(arpRequest);
+
+            System.out.println(macAddress);
             List<IPathElement> route = ((PC)sender).getRouteByMacAddress(macAddress,sender);
             System.out.println(route);
         } else {
+            System.out.println("Network convergence occurs");
+
             /*
             1.передаём пакет на маршрутизатор через gateway
             2.производим подготовку маршрутизаторов(динамическое изучение сети)
@@ -42,18 +44,3 @@ public class RipRouteProvider implements IRouteProvider {
         return null;
     }
 }
-
-
-/*ArpDevice sender = (ArpDevice)net.findByIP(senderIP);
-        ArpDevice recipient = (ArpDevice) net.findByIP(recipientIP);
-
-        if (sender == null || recipient == null) {
-            System.out.println("One or more network elements with the specified IP do not exist");
-            return null;
-        }
-
-        if (Arrays.equals(sender.getIP().getNetAddress(), recipient.getIP().getNetAddress())) {
-            MacAddress recipientMacAddress =
-                    sender.sendArpRequest(recipient.getIP());
-            System.out.println(recipientMacAddress);
-            System.out.println(sender.getRouteByMacAddress(recipientMacAddress, sender));*/

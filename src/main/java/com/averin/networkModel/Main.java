@@ -1,5 +1,6 @@
 package com.averin.networkModel;
 
+import com.averin.networkModel.pathElements.active.Router;
 import com.averin.networkModel.pathElements.passive.Hub;
 import com.averin.networkModel.pathElements.active.PC;
 import com.averin.networkModel.pathElements.active.Switch;
@@ -32,12 +33,24 @@ public class Main {
 
         Switch sw1 = new Switch(ip5, mac5);
 
+        Router router1 = new Router(ip6, mac6);
+
         Cable cable1 = new Cable(pc1, hub1);
         Cable cable2 = new Cable(pc2, hub1);
         Cable cable3 = new Cable(hub1, sw1);
         Cable cable4 = new Cable(pc3, hub2);
         Cable cable5 = new Cable(pc4, hub2);
         Cable cable6 = new Cable(hub2, sw1);
+
+        Cable cable7 = new Cable(hub2, router1);
+
+        router1.addRoutingTableRow(new int[]{122, 122, 122, 0},
+                new int[]{255,255,255,0},
+                new int[]{122,122,122,6},
+                cable7,
+                ip6,
+                0
+                );
 
         Network network = new Network();
 
@@ -51,14 +64,17 @@ public class Main {
 
         network.addPathElement(sw1);
 
+        network.addPathElement(router1);
+
         network.addPathElement(cable1);
         network.addPathElement(cable2);
         network.addPathElement(cable3);
         network.addPathElement(cable4);
         network.addPathElement(cable5);
         network.addPathElement(cable6);
+        network.addPathElement(cable7);
 
-        System.out.println(network.pathElements);
+        System.out.println(network.getPathElements());
 
         NetworkTest networkTest = new NetworkTest();
         networkTest.networkList.add(network);

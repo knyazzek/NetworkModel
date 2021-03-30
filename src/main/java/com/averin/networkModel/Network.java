@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Network {
-     Map<Integer,IPathElement> pathElements = new HashMap<>();
+     private Map<Integer,IPathElement> pathElements = new HashMap<>();
 
-    public ActiveElement findByIp(IPv4 ip) {
+    public ActiveElement findElementByIp(IPv4 ip) {
         for (IPathElement pathElement : pathElements.values()) {
             if (pathElement instanceof ActiveElement
                     && ((ActiveElement)pathElement).getIp().equals(ip)) {
@@ -18,7 +18,7 @@ public class Network {
         return null;
     }
 
-    public IPathElement findById(int id) {
+    public IPathElement findElementById(int id) {
         return pathElements.get(id);
     }
 
@@ -30,5 +30,9 @@ public class Network {
     public void addPathElements(IPathElement ... pathElements) {
         for (IPathElement pathElement : pathElements)
             addPathElement(pathElement);
+    }
+
+    public Map<Integer, IPathElement> getPathElements() {
+        return new HashMap<>(pathElements);
     }
 }
