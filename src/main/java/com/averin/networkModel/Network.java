@@ -1,9 +1,7 @@
 package com.averin.networkModel;
 
 import com.averin.networkModel.pathElements.IPathElement;
-import com.averin.networkModel.pathElements.active.ActiveElement;
 import com.averin.networkModel.pathElements.active.L3Device;
-
 import java.util.HashMap;
 import java.util.Map;
 

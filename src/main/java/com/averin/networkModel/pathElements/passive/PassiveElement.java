@@ -1,9 +1,10 @@
 package com.averin.networkModel.pathElements.passive;
 
-import com.averin.networkModel.ArpRequest;
+import com.averin.networkModel.Request;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.ActiveElement;
+import com.averin.networkModel.pathElements.active.Router;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,12 +16,12 @@ public abstract class PassiveElement implements IPathElement {
     private int cost;
     private Set<IPathElement> connections = new HashSet<>();
 
-    public MacAddress sendAll(ArpRequest arpRequest, IPathElement sender) {
+    public MacAddress sendAllArpRequest(Request arpRequest, IPathElement sender) {
         for (IPathElement connection : getConnections(sender)) {
             MacAddress macAddress = null;
 
             if (connection instanceof PassiveElement) {
-                macAddress = ((PassiveElement)connection).sendAll(arpRequest, this);
+                macAddress = ((PassiveElement)connection).sendAllArpRequest(arpRequest, this);
             }else if (connection instanceof ActiveElement) {
                 macAddress = ((ActiveElement)connection).sendArpRequest(arpRequest, this);
             }
@@ -30,6 +31,24 @@ public abstract class PassiveElement implements IPathElement {
         }
         return null;
     }
+
+    public List<IPathElement> sendAllRequest(Request request, IPathElement sender) {
+        for (IPathElement connection : getConnections(sender)) {
+            if (connection instanceof Router) {
+                Router router = (Router) connection;
+                List<IPathElement> route = null;
+
+                route = router.getRouteByRequest(request, this);
+
+                if (route == null) return null;
+
+                route.add(0, this);
+                return route;
+            }
+        }
+        return null;
+    }
+
     public List<IPathElement> sendAll(MacAddress recipientMacAddress, IPathElement sender) {
         for (IPathElement connection : getConnections(sender)) {
             List<IPathElement> route = null;

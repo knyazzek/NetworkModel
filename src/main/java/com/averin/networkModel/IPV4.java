@@ -96,7 +96,7 @@ public class IPv4 {
     //TODO setNetAddress
     private void setNetAddress() {
         for (int i = 0; i < 4; i++) {
-            netAddress[i] = nodeAddress[i] & netAddress[i];
+            netAddress[i] = nodeAddress[i] & netMask[i];
         }
     }
 

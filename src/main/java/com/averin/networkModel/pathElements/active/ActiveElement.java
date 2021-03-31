@@ -1,6 +1,6 @@
 package com.averin.networkModel.pathElements.active;
 
-import com.averin.networkModel.ArpRequest;
+import com.averin.networkModel.Request;
 import com.averin.networkModel.MacAddress;
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.passive.PassiveElement;
@@ -12,10 +12,10 @@ public abstract class ActiveElement implements IPathElement {
     private int costs;
     private Set<IPathElement> connections = new HashSet<>();
 
-    public MacAddress sendArpRequest(ArpRequest arpRequest, IPathElement lastSender) {
+    public MacAddress sendArpRequest(Request arpRequest, IPathElement lastSender) {
         for (IPathElement connection : getConnections(lastSender)) {
             if (connection instanceof PassiveElement) {
-                MacAddress result = ((PassiveElement)connection).sendAll(arpRequest, this);
+                MacAddress result = ((PassiveElement)connection).sendAllArpRequest(arpRequest, this);
 
                 if (result != null) {
                     if (this instanceof Switch) {

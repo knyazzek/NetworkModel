@@ -51,4 +51,8 @@ public abstract class L3Device extends ActiveElement{
     public void setArpTable(Map<IPv4, MacAddress> arpTable) {
         this.arpTable = arpTable;
     }
+
+    public void addArpTableRow(IPv4 ip, MacAddress macAddress) {
+        arpTable.put(ip, macAddress);
+    }
 }
