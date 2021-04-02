@@ -95,8 +95,9 @@ public class Router extends L3Device{
             if (Arrays.equals(request.getRecipientIp().getNetAddress(), routingTableRow.destination)) {
 
                 //If this subnet is already connected to the router
-                if (Arrays.equals(routingTableRow.getInterf().getNodeAddress(),
-                        routingTableRow.gateway)) {
+                if (routingTableRow.getInterf() != null &&
+                        Arrays.equals(routingTableRow.getInterf().getNodeAddress(),
+                            routingTableRow.gateway)) {
                     return getRouteFromConnectedSubnet(request.getRecipientIp(),
                             routingTableRow,
                             this);
@@ -123,10 +124,86 @@ public class Router extends L3Device{
         if (!getArpTable().containsKey(recipientIp)) {
             //TODO arpRequest should get gray router IP.
             Request arpRequest = new Request(this, recipientIp);
-            recipientMac = ((PassiveElement)routingTableRow.getConnection()).sendAllArpRequest(arpRequest, this);
+            recipientMac = ((PassiveElement)routingTableRow.getConnection()).
+                    sendAllArpRequest(arpRequest, this);
             addArpTableRow(recipientIp, recipientMac);
         }
         return getRouteByMacAddress(recipientMac, lastSender);
+    }
+
+    public boolean isUpdateRoutingTable() {
+        boolean update = false;
+
+        for (IPathElement connection : getConnections()) {
+            for (IPathElement neighboringNode : connection.getConnections(this)) {
+                if (neighboringNode instanceof Router) {
+                    Router router = (Router) neighboringNode;
+                    boolean changed = changeRoutingTable(router, connection);
+
+                    if (changed == true)
+                        update = true;
+                }
+            }
+        }
+        return update;
+    }
+
+    public boolean changeRoutingTable(Router neighboringRouter,
+                                      IPathElement connection) {
+        Set<RoutingTableRow> neighboringRouterRoutingTable = neighboringRouter.getRoutingTable();
+        boolean changed = false;
+
+        for (RoutingTableRow neighboringRouterRoutingTableRow : neighboringRouterRoutingTable) {
+            int count = 0;
+
+            for (RoutingTableRow routingTableRow : getRoutingTable()) {
+                if (Arrays.equals(neighboringRouterRoutingTableRow.destination,
+                        routingTableRow.destination)){
+                    count++;
+
+                    if (neighboringRouterRoutingTableRow.metric + 1 < routingTableRow.metric) {
+                        routingTable.remove(routingTableRow);
+                        addRoutingTableRow(neighboringRouter,
+                                neighboringRouterRoutingTableRow,
+                                connection);
+                        changed = true;
+                    }
+                }
+            }
+
+            if (count == 0) {
+                addRoutingTableRow(neighboringRouter,
+                        neighboringRouterRoutingTableRow,
+                        connection);
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    public void addRoutingTableRow(Router neighboringRouter,
+                                   RoutingTableRow neighboringRoutingTableRow,
+                                   IPathElement connection) {
+        int[] destinationTmp = neighboringRoutingTableRow.destination;
+        int[] netmaskTmp = neighboringRoutingTableRow.netmask;
+        int[] gatewayTmp = neighboringRouter.getIp().getNodeAddress();
+        IPathElement connectionTmp = connection;
+        //If null, it means that it is connected to a different router, and not to a subnet
+        IPv4 interfaceTmp = null;
+        int metricTmp = neighboringRoutingTableRow.metric + 1;
+
+        for (RoutingTableRow routingTableRow : routingTable) {
+            if (routingTableRow.connection == connection) {
+                interfaceTmp = routingTableRow.interf;
+            }
+        }
+
+        routingTable.add(new RoutingTableRow(destinationTmp,
+                netmaskTmp,
+                gatewayTmp,
+                connectionTmp,
+                interfaceTmp,
+                metricTmp));
     }
 
     @Override
@@ -203,6 +280,18 @@ public class Router extends L3Device{
         public void setMetric(int metric) {
             this.metric = metric;
         }
+
+        @Override
+        public String toString() {
+            return "RoutingTableRow{" +
+                    "destination=" + Arrays.toString(destination) +
+                    ", netmask=" + Arrays.toString(netmask) +
+                    ", gateway=" + Arrays.toString(gateway) +
+                    ", connection=" + connection +
+                    ", interf=" + interf +
+                    ", metric=" + metric +
+                    "}\n";
+        }
     }
 
     public void addRoutingTableRow(int[] destination,
@@ -214,10 +303,13 @@ public class Router extends L3Device{
         if (Arrays.equals(interf.getNetAddress(), destination)) {
             metric = 0;
         } else {
-            metric = 1;
+            metric = 5000;
         }
-
         routingTable.add(new RoutingTableRow(destination, netmask, gateway,connection, interf, metric));
+    }
+
+    public Set<RoutingTableRow> getRoutingTable() {
+        return new HashSet<>(routingTable);
     }
 
     @Override

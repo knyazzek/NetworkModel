@@ -59,19 +59,19 @@ public class Main {
                 cable7,
                 ipInterface1Router1
         );
-        router1.addRoutingTableRow(new int[] {10,0,0,0},
+/*        router1.addRoutingTableRow(new int[] {10,0,0,0},
                 new int[] {255,255,255,0},
                 new int[] {2,2,2,1},
                 cable8,
                 ipInterface2Router2
-        );
+        );*/
 
-        router2.addRoutingTableRow(new int[] {122,122,122,0},
+/*        router2.addRoutingTableRow(new int[] {122,122,122,0},
                 new int[] {255,255,255,0},
                 new int[] {2,2,2,1},
                 cable8,
                 ipInterface2Router1
-        );
+        );*/
         router2.addRoutingTableRow(new int[] {10,0,0,0},
                 new int[] {255,255,255,0},
                 new int[] {10,0,0,2},
@@ -90,8 +90,8 @@ public class Main {
         networkTest.networkList.add(network);
         networkTest.providerList.add(RipRouteProvider.class);
 
+        network.exploreNetwork();
         networkTest.start();
-        System.out.println(network);
 
 /*        Request request = new Request(pc1, pc5.getIp());
         System.out.println(router1.getRouteByRequest(request, null));*/

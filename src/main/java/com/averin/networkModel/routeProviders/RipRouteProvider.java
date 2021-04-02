@@ -47,7 +47,6 @@ public class RipRouteProvider implements IRouteProvider {
 
                 //Route from Gateway to Terminal Vertex
                 Request request = new Request(senderPC, recipient.getIp());
-
                 List<IPathElement> routeFromGatewayToTerminalVertex = ((Router)route.get(route.size()-1)).
                         getRouteByRequest(request, null);
                 routeFromGatewayToTerminalVertex.remove(0);

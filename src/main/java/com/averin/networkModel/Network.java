@@ -2,6 +2,8 @@ package com.averin.networkModel;
 
 import com.averin.networkModel.pathElements.IPathElement;
 import com.averin.networkModel.pathElements.active.L3Device;
+import com.averin.networkModel.pathElements.active.Router;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,20 @@ public class Network {
 
     public IPathElement findElementById(int id) {
         return pathElements.get(id);
+    }
+
+    public void exploreNetwork() {
+        int countOfChange = 0;
+
+        for (IPathElement pathElement : pathElements.values()) {
+            if (pathElement instanceof Router) {
+                if (((Router)pathElement).isUpdateRoutingTable())
+                    countOfChange++;
+            }
+        }
+
+        if (countOfChange > 0)
+            exploreNetwork();
     }
 
     public void addPathElement(IPathElement pathElement) {
